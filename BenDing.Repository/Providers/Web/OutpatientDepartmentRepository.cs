@@ -32,7 +32,7 @@ namespace BenDing.Repository.Providers.Web
             var xmlStr = XmlHelp.SaveXml(param);
             if (!xmlStr) throw new Exception("门诊费用录入保存参数出错");
             var result = MedicalInsuranceDll.CallService_cxjb("TPYP301");
-            if (result != 1) throw new Exception("门诊费用录入执行出错");
+            if (result != 1) throw new Exception("门诊费用录入执行出错"); 
             var iniData = XmlHelp.DeSerializerModel(new OutpatientDepartmentCostInputJsonDto(), true);
              resultData = AutoMapper.Mapper.Map<OutpatientDepartmentCostInputDto>(iniData);
             return resultData;

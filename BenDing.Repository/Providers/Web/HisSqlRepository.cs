@@ -1681,7 +1681,7 @@ namespace BenDing.Repository.Providers.Web
                         whereSql += $"  and b.SettlementTime>='{monthTime.StartTime}' and b.SettlementTime<='{monthTime.EndTime}'";
                     }
 
-                    whereSql += " order by b.SettlementTime asc";
+                    
                     string executeSql = querySql + whereSql;
 
                     var result = sqlConnection.Query<MedicalExpenseReportDto>(executeSql).ToList();

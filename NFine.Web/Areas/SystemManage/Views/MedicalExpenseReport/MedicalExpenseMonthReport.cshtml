@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Index.cshtml";
+}
+<!DOCTYPE html>
+<script>
+
+    $(function () {
+        initControl();
+        gridList();
+       
+
+    });
+    function initControl() {
+        $("#startTime").val();
+        $("#OrganizeSelect").bindSelect({
+            url: "/SystemManage/Organize/GetListData",
+            id: "F_EnCode",
+            text: "F_FullName"
+        });
+    }
+    function gridList() {
+        var dateTime = $("#dateTime").val();
+        $("#startTime").val(dateTime);
+        var $gridList = $("#gridList");
+        $gridList.dataGrid({
+            url: "/SystemManage/MedicalExpenseReport/GetGridMonthJson",
+            height: $(window).height() - 96,
+            postData:
+            {
+                Date: $("#startTime").val(),
+                OrganizationCode: $("#OrganizeSelect").val()
+            },
+            colModel: [
+                { label: "主键", name: "Day", hidden: true, key: true },
+                { label: '日期', name: 'Day', width: 120, align: 'left' },
+                { label: '一般诊疗费人次', name: 'Frequency', width: 120, align: 'left' },
+                { label: '门诊费用', name: 'MedicalTreatmentTotalCost', width: 120, align: 'left' },
+                { label: '报销金额', name: 'ReimbursementExpensesAmount', width: 200, align: 'left' }
+            ],
+          
+            viewrecords: true
+        });
+        $("#btn_search").click(function () {
+           
+            //reportExcelIni();
+            $gridList.jqGrid('setGridParam',
+                {
+                    postData:
+                    {
+                        Date: $("#startTime").val(),
+                        OrganizationCode: $("#OrganizeSelect").val()
+                    }
+                }).trigger('reloadGrid');
+
+        });
+        $("#btn_MonthExcel").click(function () {
+           
+            var url = "/api/BenDing/MedicalExpenseMonthExcel?";
+            url += "&Date=" + $("#startTime").val();
+            url += "&OrganizationCode=" + $("#OrganizeSelect").val();
+            url += "&OrganizationName=" + $("#OrganizeSelect").find("option:selected").text();
+            window.location.href = url;  
+
+
+        });
+    }
+
+ 
+
+
+
+</script>
+<div class="topPanel">
+    <div class="toolbar" style="float: left">
+
+        <div class="btn-group" style="margin-left: 20px; width: 200px;height: 32px;">
+            <select id="OrganizeSelect" class="form-control" style="padding: 0px;height: 32px;"></select>
+        </div>
+        
+        @*<div class="btn-group" style="margin-left: 10px;">
+                <span>机构名称:</span>
+            </div>
+            <div class="btn-group" style="height: 30px;">
+                <input id="txt_OrganizationName" type="text" class="form-control" placeholder="机构名称" style="width: 100px; height: 20px">
+            </div>*@
+        <div class="btn-group" style="margin-left: 15px;">
+            月份：
+            <input type="text" class="Wdate" id="startTime"
+                   onClick="WdatePicker({ autoPickDate: true, dateFmt: 'yyyy-MM', maxDate: '#F{\'new Date()\'}', readOnly: true });" style="width: 100px;" />
+        </div>
+        <div class="btn-group" style="margin-left: 5px;">
+            <a class="btn btn-primary" id="btn_search">查询</a>
+        </div>
+        <div class="btn-group" style="margin-left: 5px;">
+            <a class="btn btn-primary" id="btn_MonthExcel" >导出</a>
+        </div>
+       
+    </div>
+
+</div>
+<div class="gridPanel">
+    <table id="gridList"></table>
+    <div id="gridPager"></div>
+    <div>
+        <input type="hidden" id="UserId" name="UserId" value="@ViewBag.empid" placeholder="用户ID" />
+        <input type="hidden" id="dateTime" name="dateTime" value="@ViewBag.startTime" placeholder="用户ID" />
+        <input type="hidden" id="OrganizationCode" name="UserId" value="@ViewBag.OrganizationCode" placeholder="组织机构" />
+    </div>
+</div>
+

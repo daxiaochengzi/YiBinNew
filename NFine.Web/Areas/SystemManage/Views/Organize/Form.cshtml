@@ -1,0 +1,176 @@
+﻿@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Form.cshtml";
+}
+<script>
+    var keyValue = $.request("keyValue");
+    $(function () {
+        initControl();
+        if (!!keyValue) {
+            $.ajax({
+                url: "/SystemManage/Organize/GetFormJson",
+                data: { keyValue: keyValue },
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    $("#form1").formSerialize(data);
+                }
+            });
+        }
+    });
+    function initControl() {
+        $("#F_CategoryId").select2({ minimumResultsForSearch: -1 });
+        $("#F_ParentId").bindSelect({
+            url: "/SystemManage/Organize/GetTreeSelectJson"
+        });
+        $("#F_OrganizationGrade").bindSelect({
+            url: "/SystemManage/ItemsData/GetSelectJson",
+            param: { enCode: "HospitalGrade" }
+        });
+    }
+    function submitForm() {
+        if (!$('#form1').formValid()) {
+            return false;
+        }
+        $.submitForm({
+            url: "/SystemManage/Organize/SubmitForm?keyValue=" + keyValue,
+            param: $("#form1").formSerialize(),
+            success: function() {
+                $.currentWindow().$("#gridList").resetSelection();
+                $.currentWindow().$("#gridList").trigger("reloadGrid");
+            }
+        });
+    }
+</script>
+<form id="form1">
+    <div style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">
+        <ul class="nav nav-tabs">
+            <li role="presentation" class="active"><a href="#">基本信息</a></li>
+            @*<li role="presentation"><a href="#">扩展信息</a></li>*@
+        </ul>
+        <div style="padding-top: 20px; margin-right: 30px;">
+            <table class="form">
+                <tr>
+                    <th class="formTitle">上级</th>
+                    <td class="formValue">
+                        <select id="F_ParentId" name="F_ParentId" class="form-control required">
+                            <option value="0">父节点</option>
+                        </select>
+                    </td>
+                    <th class="formTitle">医院等级</th>
+                    <td class="formValue">
+                        <select id="F_OrganizationGrade" name="F_OrganizationGrade" ></select>
+                    </td>
+                    @*<th class="formTitle">类型</th>
+            <td class="formValue">
+                <select id="F_CategoryId" name="F_Target" class="form-control">
+                    <option value="">==请选择==</option>
+                    <option value="Group">集团</option>
+                    <option value="Company">公司</option>
+                    <option value="Department">部门</option>
+                    <option value="WorkGroup">小组</option>
+                </select>
+            </td>*@
+                </tr>
+                <tr>
+                    <th class="formTitle">名称</th>
+                    <td class="formValue">
+                        <input id="F_FullName" name="F_FullName" type="text" class="form-control" />
+                    </td>
+                    <th class="formTitle">机构编号</th>
+                    <td class="formValue">
+                        <input id="F_EnCode" name="F_EnCode" type="text" class="form-control required"    />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">医保账户</th>
+                    <td class="formValue">
+                        <input id="F_MedicalInsuranceAccount" name="F_MedicalInsuranceAccount" type="text" class="form-control required"   placeholder="医保账户"/>
+                    </td>
+                    <th class="formTitle">医保密码</th>
+                    <td class="formValue">
+                        <input id="F_MedicalInsurancePwd" name="F_MedicalInsurancePwd" type="text" class="form-control required"   placeholder="医保密码" />
+                    </td>
+                </tr>
+                <tr>
+                    <th class="formTitle">行政区域</th>
+                    <td class="formValue">
+                        <select id="F_AdministrativeArea" name="F_AdministrativeArea" class="form-control">
+                            <option value="511599" selected="selected">市本级</option>
+                            <option value="511502">翠屏区</option>
+                            <option value="511521">宜宾县</option>
+                            <option value="511522">南溪区</option>
+                            <option value="511523">江安县</option>
+                            <option value="511524">长宁县</option>
+                            <option value="511525">高县</option>
+                            <option value="511526">珙县</option>
+                            <option value="511527">筠连县</option>
+                            <option value="511528">兴文县</option>
+                            <option value="511529">屏山县</option>
+                        </select>
+                    </td>
+
+                    @*<th class="formTitle">医院行政区域</th>
+                    <td class="formValue">
+                        <input id="F_AdministrativeArea" name="F_AdministrativeArea" type="text" class="form-control required"   placeholder="医院行政区域"/>
+                    </td>*@
+                    <th class="formTitle">医院医保编码</th>
+                    <td class="formValue">
+                        <input id="F_MedicalInsuranceHandleNo" name="F_MedicalInsuranceHandleNo" type="text" class="form-control required" placeholder="医院医保编码"/>
+                    </td>
+
+
+                </tr>
+                
+                <tr >
+                    <th class="formTitle">有效时间</th>
+                    <td class="formValue"  >
+                        <input type="text" class="Wdate" name="F_EffectiveTime" id="F_EffectiveTime"
+                               onClick="WdatePicker({ autoPickDate: true, dateFmt: 'yyyy-MM-dd', minDate: '{%y-1}',maxDate: '{%y+2}', readOnly: true });" style="width: 220px;height: 35px"/>
+                        @*<input id="F_EffectiveTime" name="F_EffectiveTime" type="text" class="form-control"/>*@
+                    </td>
+                </tr>
+
+                @*<tr>
+                    <th class="formTitle">负责人</th>
+                    <td class="formValue">
+                        <input id="F_ManagerId" name="F_ManagerId" type="text" class="form-control" />
+                    </td>
+                    <th class="formTitle">手机</th>
+                    <td class="formValue">
+                        <input id="F_MobilePhone" name="F_MobilePhone" type="text" class="form-control" />
+                    </td>
+                </tr>*@
+                <tr >
+                    <th class="formTitle" style="height: 35px;">选项</th>
+                    <td class="formValue" colspan="3"  style="padding-top: 1px;">
+                        <div class="ckbox">
+                            <input id="F_EnabledMark" name="F_EnabledMark" type="checkbox" checked="checked"><label for="F_EnabledMark">有效</label>
+                        </div>
+                        <div class="ckbox">
+                            <input id="F_Outpatient" name="F_Outpatient" type="checkbox" checked="checked"><label for="F_Outpatient">门诊</label>
+                        </div>
+                        <div class="ckbox">
+                            <input id="F_Hospital" name="F_Hospital" type="checkbox" checked="checked"><label for="F_Hospital">住院</label>
+                        </div>
+                        <div class="ckbox">
+                            <input id="F_BirthHospital" name="F_BirthHospital" type="checkbox" checked="checked"><label for="F_BirthHospital">生育</label>
+                        </div>
+                        <div class="ckbox">
+                            <input id="F_AnotherPlace" name="F_AnotherPlace" type="checkbox" checked="checked"><label for="F_AnotherPlace">异地</label>
+                        </div>
+                    </td>
+               
+                </tr>
+                @*<tr>
+                    <th class="formTitle" valign="top" style="padding-top: 5px;">
+                        备注
+                    </th>
+                    <td class="formValue" colspan="3">
+                        <textarea id="F_Description" name="F_Descriptions" class="form-control" style="height: 60px;"></textarea>
+                    </td>
+                </tr>*@
+            </table>
+        </div>
+    </div>
+</form>

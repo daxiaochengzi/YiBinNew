@@ -1,0 +1,105 @@
+﻿
+@{
+    ViewBag.Title = "门诊取消结算";
+    Layout = "~/Views/Shared/_Base.cshtml";
+}
+
+<link href="~/Content/js/layui/css/modules/layuiAutocomplete.css" rel="stylesheet" />
+<script src="~/script/BenDingComm.js"></script>
+<style>
+    .layui-card-header.layuibd-card-header-auto {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        height: auto;
+    }
+
+    .layuibd-card-header-auto i.layuibd-button-btn {
+        position: relative;
+        right: 0;
+        top: 0;
+        vertical-align: middle
+    }
+</style>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <form class="layui-form" id="LAY-form" lay-filter="LAY-form-render">
+            <input type="hidden" id="bid" value="@ViewBag.bid" placeholder="业务ID" />
+            <input type="hidden" id="empid" value="@ViewBag.empid" placeholder="用户ID" />
+            <input type="hidden" id="transkey" name="TransKey" value="@ViewBag.transkey" placeholder="医保交易id" />
+            @{Html.RenderPartial("_CSharpActiveX");}
+            <div class="layui-card-header layuibd-card-header-auto">
+                <div class="layui-form-item" id="passwordDiv">
+                    <label class="layui-form-label">医保卡密码</label>
+                    <div class="layui-input-inline">
+                        <input type="password" Id="CardPwd" name="password" lay-verify="pass"   maxlength="6" placeholder="请输入密码" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">主诊断编码</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="DiagnosisCode" autocomplete="off" disabled class="layui-input layui-disabled">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item" style="text-align: center; margin-top: 20px;">
+                    <button type="button" Id="DoorDiagnosisSettlementCancel" class="layui-btn">读卡</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script>
+    layui.config({
+        base: '/Content/js/layui/plugin/'
+    }).extend({
+        autocomplete: 'layAutoComplete'
+        });
+    layui.use(['form', 'laypage', 'layer', 'table', 'element', 'laydate', 'autocomplete'], function() {
+        var $ = layui.$,
+            element = layui.element,
+            form = layui.form,
+            layer = layui.layer,
+            table = layui.table;
+           
+        $('#CardPwd').bind('keypress', function (event) {
+          
+            if (event.keyCode === 13) {
+               
+                console.log("调用回车事件！");
+              
+            }
+        });
+    
+        //门诊取消结算
+        $('#DoorDiagnosisSettlementCancel').on('click', function () {
+            
+           // var sss = {
+           //     "InsuranceType": 0,
+           //     "CardPwd":"890811"
+           // }
+           //var cardParam={
+           //    "Account": "ybx12865",
+           //    "Pwd": "aaaaaa",
+           //    "OperatorId": "76EDB472F6E544FD8DC8D354BB088BD7",
+           //    "InsuranceType": null,
+           //    "IdentityMark": "1001522187",
+           //    "AfferentSign": "2"
+           // }
+           // var activeX = document.getElementById("CSharpActiveX");
+           // var activeData = activeX.OutpatientMethods(JSON.stringify(sss), JSON.stringify(cardParam), "ReadCardInfo");
+           // var activeJsonData = JSON.parse(activeData);
+           // if (activeJsonData.Success === false) {
+           //     msgError(activeJsonData.Message);
+           //     return false;
+           // } else {
+           //     msgSuccess(activeJsonData.Data);
+           // }
+        });
+
+        
+
+
+    });
+
+
+</script>

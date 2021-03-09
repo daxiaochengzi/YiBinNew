@@ -17,7 +17,8 @@ namespace NFine.Web.Controllers
     [HandlerLogin]
     public class HomeController : Controller
     {
-       
+        private UserApp userApp = new UserApp();
+        private OrganizeApp organizeApp =new OrganizeApp();
 
         public HomeController()
         {
@@ -26,7 +27,13 @@ namespace NFine.Web.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-           
+            var loginInfo = OperatorProvider.Provider.GetCurrent();
+            if (loginInfo != null)
+            {
+               var organizeData= organizeApp.GetForm(loginInfo.DepartmentId);
+                ViewBag.LoginOrganizationName = organizeData.F_FullName;
+            }
+
             return View();
         }
         [HttpGet]

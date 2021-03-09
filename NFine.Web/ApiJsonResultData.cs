@@ -159,7 +159,7 @@ namespace NFine.Web
                 jsonResultEntry.Code = 1010;
 
                 log.Error(Is_day + e);
-                jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message : e.InnerException.InnerException == null ? e.InnerException.Message : e.InnerException.InnerException.Message));
+                jsonResultEntry.AddErrorMessage("接口系统错误:" + (e.InnerException == null ? e.Message : e.InnerException.InnerException == null ? e.InnerException.Message : e.InnerException.InnerException.Message));
 
             }
 
@@ -186,7 +186,7 @@ namespace NFine.Web
             {
                 jsonResultEntry.Code = 1010;
                 log.Error(Is_day + e.ToString());
-                jsonResultEntry.AddErrorMessage("系统错误:" + (e.InnerException == null ? e.Message :
+                jsonResultEntry.AddErrorMessage("接口系统错误:" + (e.InnerException == null ? e.Message :
                                                     e.InnerException.InnerException == null ? e.InnerException.Message :
                                                     e.InnerException.InnerException.Message));
             }

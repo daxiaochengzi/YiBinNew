@@ -209,7 +209,24 @@
     
         $("#queryDataDiv").hide();
         $("#passwordDiv").hide();
-        
+        //门诊病人信息
+       var outpatientData;
+        //新的插件对象
+        var baseInfoNew;
+        //用户信息审核
+        function userInfoAudit(name, icCard, ybName, ybCard) {
+            var resultData = true;
+            if (name !== ybName) {
+                layer.alert("基层与医保用户名不一致", { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                resultData = false;
+            }
+            if (icCard !== ybCard) {
+                layer.alert("基层与医保身份证号不一致", { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                resultData = false;
+            }
+            return resultData;
+        }
+
         baseInfo.PageFunction.FunctionName = "Outpatient";
 
         var passWordKey = "1";
@@ -287,21 +304,21 @@
         }
         //初始化病人基本信息
         function iniInpatientInfo() {
-          
+            baseInfoNew = baseInfo;
             // 居民
-            if (baseInfo.Inpatient.InsuranceType === "342") {
-                $("#InsuranceBalance").val(baseInfo.Inpatient.ResidentInsuranceBalance);
-                //$("#OverallPaymentBalance").val(baseInfo.Inpatient.OverallPaymentBalance);
+            if (baseInfoNew.Inpatient.InsuranceType === "342") {
+                $("#InsuranceBalance").val(baseInfoNew.Inpatient.ResidentInsuranceBalance);
+                //$("#OverallPaymentBalance").val(baseInfoNew.Inpatient.OverallPaymentBalance);
                 //$("#OverallPaymentBalanceDiv").show();
              
                 //职工
-            } else if (baseInfo.Inpatient.InsuranceType === "310") {
-                $("#InsuranceBalance").val(baseInfo.Inpatient.WorkersInsuranceBalance);
+            } else if (baseInfoNew.Inpatient.InsuranceType === "310") {
+                $("#InsuranceBalance").val(baseInfoNew.Inpatient.WorkersInsuranceBalance);
             }
             var settlementVal = $('input[name="Settlement"]:checked').val();
             $("#DoorDiagnosisPreSettlementDiv").show();
             //计划生育结算
-            if (settlementVal === "1" && baseInfo.Inpatient.InsuranceType === "310") {
+            if (settlementVal === "1" && baseInfoNew.Inpatient.InsuranceType === "310") {
                            
                 buttonStatus("DoorDiagnosisPreSettlement", true);
             }
@@ -310,7 +327,7 @@
                 buttonStatus("OutpatientNationEcTrans", true);
             }
             //职工刷卡结算
-            if (settlementVal === "2" && baseInfo.Inpatient.InsuranceType === "310" )
+            if (settlementVal === "2" && baseInfoNew.Inpatient.InsuranceType === "310" )
             {
                 buttonStatus("SettlementCard", true);
                 isPassKey();
@@ -318,8 +335,8 @@
 
             }
             //居民刷卡结算
-            if (settlementVal === "4" && baseInfo.Inpatient.InsuranceType === "342") {
-                if (baseInfo.Inpatient.ResidentInsuranceBalance === 0) {
+            if (settlementVal === "4" && baseInfoNew.Inpatient.InsuranceType === "342") {
+                if (baseInfoNew.Inpatient.ResidentInsuranceBalance === 0) {
                     buttonStatus("ResidentSettlementCard", false);
                     buttonStatus("MedicalFeeRegistration", false);
                     residentOutpatientPreSettlement("");
@@ -332,8 +349,8 @@
                
             }
             //居民无卡结算
-            if (settlementVal === "5" && baseInfo.Inpatient.InsuranceType === "342") {
-                if (baseInfo.Inpatient.ResidentInsuranceBalance === 0) {
+            if (settlementVal === "5" && baseInfoNew.Inpatient.InsuranceType === "342") {
+                if (baseInfoNew.Inpatient.ResidentInsuranceBalance === 0) {
                     buttonStatus("ResidentSettlementCard", false);
                     buttonStatus("MedicalFeeRegistration", false);
                     residentOutpatientPreSettlement("");
@@ -345,7 +362,7 @@
                     }
                
             }
-            $("#InsuranceType").val(baseInfo.Inpatient.InsuranceType);
+            $("#InsuranceType").val(baseInfoNew.Inpatient.InsuranceType);
             form.render();
             //if (settlementVal === "4" )//门诊结算
             //{////显示结算按钮
@@ -356,9 +373,9 @@
             //    //buttonStatus("DoorDiagnosisSettlement", true);
             //}
             $("#InsuranceBalanceDiv").show();
-            params["AfferentSign"] =  baseInfo.HospitalInfo.AfferentSign;
-            params["IdentityMark"] = baseInfo.HospitalInfo.IdentityMark;
-            params["InsuranceType"] = baseInfo.Inpatient.InsuranceType;
+            params["AfferentSign"] =  baseInfoNew.HospitalInfo.AfferentSign;
+            params["IdentityMark"] = baseInfoNew.HospitalInfo.IdentityMark;
+            params["InsuranceType"] = baseInfoNew.Inpatient.InsuranceType;
         }
         //获取医保病人信息
         window.getInpatientInfoBack = function () {
@@ -403,7 +420,7 @@
                     } else {
                         //var activeX = document.getElementById("CSharpActiveX");
                         //门诊结算
-                        var activeData = activeXNew.OutpatientMethods(data.Data,JSON.stringify(baseInfo.HospitalInfo),"OutpatientDepartmentCostInput");
+                        var activeData = activeXNew.OutpatientMethods(data.Data,JSON.stringify(baseInfoNew.HospitalInfo),"OutpatientDepartmentCostInput");
                         var activeJsonData = JSON.parse(activeData);
                         if (activeJsonData.Success === false) {
                             msgError(activeJsonData.Message);
@@ -468,7 +485,7 @@
                        // var activeX = document.getElementById("CSharpActiveX");
                        
                         //门诊计划生育预结算
-                        var activeData = activeXNew.OutpatientMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo),"OutpatientPlanBirthPreSettlement");
+                        var activeData = activeXNew.OutpatientMethods(data.Data, JSON.stringify(baseInfoNew.HospitalInfo),"OutpatientPlanBirthPreSettlement");
                         var activeJsonData = JSON.parse(activeData);
                         if (activeJsonData.Success === false) {
                             msgError(activeJsonData.Message);
@@ -539,7 +556,7 @@
                        // var activeX = document.getElementById("CSharpActiveX");
                         //门诊计划生育结算
                       
-                        var activeData = activeXNew.OutpatientMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo),"OutpatientPlanBirthSettlement");
+                        var activeData = activeXNew.OutpatientMethods(data.Data, JSON.stringify(baseInfoNew.HospitalInfo),"OutpatientPlanBirthSettlement");
                         var activeJsonData = JSON.parse(activeData);
                         if (activeJsonData.Success === false) {
                             msgError(activeJsonData.Message);
@@ -589,7 +606,7 @@
         function outpatientNationEcTransParam() {
             var ecTransParam = $.extend({}, params);
             var url = "/GetOutpatientNationEcTransResidentParam";
-            if (baseInfo.Inpatient.InsuranceType === "310") {
+            if (baseInfoNew.Inpatient.InsuranceType === "310") {
                 url = "/OutpatientNationEcTransParam";
                 ecTransParam["InsuranceType"] = "310";
             } else {
@@ -598,9 +615,15 @@
                     layer.alert("居民报账联系电话不能为空", { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                     return false;
                 }
-                ecTransParam["CommunityName"] = baseInfo.Inpatient.CommunityName;
+                var auditData = userInfoAudit(outpatientData.PatientName,
+                    outpatientData.IdCardNo,
+                    baseInfoNew.Inpatient.PatientName,
+                    baseInfoNew.Inpatient.IdCardNo);
+                if (auditData === false) return false;
+
+                ecTransParam["CommunityName"] = baseInfoNew.Inpatient.CommunityName;
                 ecTransParam["ContactPhone"] = $("#ContactPhone").val();
-                ecTransParam["ContactAddress"] = baseInfo.Inpatient.ContactAddress;
+                ecTransParam["ContactAddress"] = baseInfoNew.Inpatient.ContactAddress;
                  
             }
             $.ajax({
@@ -620,15 +643,15 @@
                         var activeData;
                         var activeJsonData; 
                         //电子医保支付
-                        if (baseInfo.Inpatient.InsuranceType !== "310") {
+                        if (baseInfoNew.Inpatient.InsuranceType !== "310") {
                             activeData = activeXNew.OutpatientMethods(data.Data,
-                                JSON.stringify(baseInfo.HospitalInfo),
+                                JSON.stringify(baseInfoNew.HospitalInfo),
                                 "NationEcTransResident");
                             activeJsonData = JSON.parse(activeData);
                         }
                         else {
                             activeData = activeXNew.OutpatientMethods(data.Data,
-                                JSON.stringify(baseInfo.HospitalInfo),
+                                JSON.stringify(baseInfoNew.HospitalInfo),
                                 "NationEcTrans");
                               activeJsonData = JSON.parse(activeData);
                         }
@@ -648,7 +671,7 @@
         function outpatientNationEcTrans(settlementDataInfo) {
             var ecTransParam = $.extend({}, params);
             var url = "/outpatientNationEcTrans";
-            if (baseInfo.Inpatient.InsuranceType !== "310") url = "/OutpatientNationEcTransResident";
+            if (baseInfoNew.Inpatient.InsuranceType !== "310") url = "/OutpatientNationEcTransResident";
             ecTransParam["SettlementJson"] = settlementDataInfo;
             var preParam = $.extend({}, params);
             preParam["InsuranceType"] = "310";
@@ -698,7 +721,7 @@
                         //var activeX = document.getElementById("CSharpActiveX");
                         //划卡支付
                         layer.msg('正在操作中请稍等...');
-                        var activeData = activeXNew.HospitalizationMethods(JSON.stringify(data.Data), JSON.stringify(baseInfo.HospitalInfo),"WorkerCardSettlement");
+                        var activeData = activeXNew.HospitalizationMethods(JSON.stringify(data.Data), JSON.stringify(baseInfoNew.HospitalInfo),"WorkerCardSettlement");
                         var activeJsonData = JSON.parse(activeData);
                         if (activeJsonData.Success === false) {
                             msgError(activeJsonData.Message);
@@ -742,7 +765,7 @@
         }
         //职工读卡获取社保卡号
         function workerReadCardInfo(cardPwd) {
-            var activeData = activeXNew.OutpatientMethods(cardPwd, JSON.stringify(baseInfo.HospitalInfo), "ReadCardInfo");
+            var activeData = activeXNew.OutpatientMethods(cardPwd, JSON.stringify(baseInfoNew.HospitalInfo), "ReadCardInfo");
             var activeJsonData = JSON.parse(activeData);
        
             if (activeJsonData.Success === false) {
@@ -786,9 +809,9 @@
             var preParam = $.extend({}, params);
             preParam["InsuranceType"] = "342";
             preParam["SettlementJson"] = settlementJsonData;
-            preParam["CommunityName"] = baseInfo.Inpatient.CommunityName;
+            preParam["CommunityName"] = baseInfoNew.Inpatient.CommunityName;
             preParam["ContactPhone"] = $("#ContactPhone").val();
-            preParam["ContactAddress"] = baseInfo.Inpatient.ContactAddress;
+            preParam["ContactAddress"] = baseInfoNew.Inpatient.ContactAddress;
             $.ajax({
                 type: 'post',
                 url: hostNew + '/ResidentOutpatientPreSettlement',
@@ -827,9 +850,14 @@
                 layer.alert("居民报账联系电话不能为空", { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
                 return false;
             }
-            cardParam["CommunityName"] = baseInfo.Inpatient.CommunityName;
+            var auditData = userInfoAudit(outpatientData.PatientName,
+                outpatientData.IdCardNo,
+                baseInfoNew.Inpatient.PatientName,
+                baseInfoNew.Inpatient.IdCardNo);
+            if (auditData === false) return false;
+            cardParam["CommunityName"] = baseInfoNew.Inpatient.CommunityName;
             cardParam["ContactPhone"] = $("#ContactPhone").val();
-            cardParam["ContactAddress"] = baseInfo.Inpatient.ContactAddress;
+            cardParam["ContactAddress"] = baseInfoNew.Inpatient.ContactAddress;
             var pwd = $("#CardPwd").val();
             if (settlementRadio === "4") {
                 if (passWordKey === "0") {
@@ -869,15 +897,16 @@
                         // var activeX = document.getElementById("CSharpActiveX");
 
                        // 门诊居民结算
-                        var activeData = activeXNew.OutpatientMethods(data.Data, JSON.stringify(baseInfo.HospitalInfo), "ResidentSettlement");
+                        var activeData = activeXNew.OutpatientMethods(data.Data, JSON.stringify(baseInfoNew.HospitalInfo), "ResidentSettlement");
                         var activeJsonData = JSON.parse(activeData);
                         if (activeJsonData.Success === false) {
                             var errorMsg = activeJsonData.Message;
-                            if (errorMsg.indexOf('居民门诊统筹余额及转结余额均为零') === -1) {
-                                msgError(activeJsonData.Message);
-                            } else {
-                                residentOutpatientPreSettlement("");
-                            }
+                            msgError(activeJsonData.Message);
+                            //if (errorMsg.indexOf('居民门诊统筹余额及转结余额均为零') === -1) {
+                               
+                            //} else {
+                            //    residentOutpatientPreSettlement("");
+                            //}
                           
                         } else {
                             residentOutpatientPreSettlement(activeJsonData.Data);
@@ -890,15 +919,15 @@
      
 
         $('#CardPwd').bind('keypress', function (event) {
-            var settlementVal = $('input[name="Settlement"]:checked').val();
+            var settlementValData = $('input[name="Settlement"]:checked').val();
 
-            if (event.keyCode === 13 && settlementVal==="2") {
+            if (event.keyCode === 13 && settlementValData==="2") {
                 workerSettlementCard();
             }//居民有卡报账
-            if (event.keyCode === 13 && settlementVal==="4") {
+            if (event.keyCode === 13 && settlementValData==="4") {
                 residentSettlementCard();
             }//居民无卡报账
-            if (event.keyCode === 13 && settlementVal==="5") {
+            if (event.keyCode === 13 && settlementValData==="5") {
                 residentSettlementCard();
             }
         });
@@ -973,12 +1002,12 @@
                     return false;
                 }
             }
-            //baseInfo.Inpatient.InsuranceType = "342";
-            //baseInfo.Inpatient.PatientName = "孙支燕";
-            //baseInfo.Inpatient.IdCardNo = "4721787353615206833";
-            //baseInfo.Inpatient.CommunityName = "宜宾市翠屏区";   
-            //baseInfo.HospitalInfo.AfferentSign = "2";
-            //baseInfo.HospitalInfo.IdentityMark = "1001522187";
+            //baseInfoNew.Inpatient.InsuranceType = "342";
+            //baseInfoNew.Inpatient.PatientName = "孙支燕";
+            //baseInfoNew.Inpatient.IdCardNo = "4721787353615206833";
+            //baseInfoNew.Inpatient.CommunityName = "宜宾市翠屏区";   
+            //baseInfoNew.HospitalInfo.AfferentSign = "2";
+            //baseInfoNew.HospitalInfo.IdentityMark = "1001522187";
             //iniInpatientInfo();
             queryData(getInpatientInfoBack);
             radioChecked();
@@ -1064,6 +1093,7 @@
                     return false;
 
                 } else {
+                    outpatientData = data.Data;
                     jsonToForm(data.Data, "LAY-form-render"); 
                     
                     $("#ContactPhone").val(data.Data.ContactPhone);

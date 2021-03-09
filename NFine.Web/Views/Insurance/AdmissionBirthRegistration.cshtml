@@ -205,6 +205,21 @@
             //初始化公共页面
             iniJs = $;
             iniMsg = layer;
+            //新的插件对象
+            var baseInfoNew;
+            //用户信息审核
+            function userInfoAudit(name, icCard, ybName, ybCard) {
+                var resultData = true;
+                if (name !== ybName) {
+                    layer.alert("基层与医保用户名不一致", { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                    resultData = false;
+                }
+                if (icCard !== ybCard) {
+                    layer.alert("基层与医保身份证号不一致", { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                    resultData = false;
+                }
+                return resultData;
+            }
             form.render(null, 'LAY-form-render');
             //执行一个laydate实例
             laydate.render({ elem: '#date1' });
@@ -362,7 +377,7 @@
            
             //初始化病人基本信息
             function iniInpatientInfo() {
-
+                baseInfoNew = baseInfo;
                 jsonToForm(baseInfo.Inpatient, "LAY-form-render");
                 //加载诊断默认数据
                 tableIns.reload({
@@ -515,8 +530,22 @@
             //登记
             form.on('submit(BirthRegister)',
                 function (data) {
-
-                    getBirthHospitalizationRegisterParam(data);
+                    if (baseInfoNew.Inpatient.InsuranceType === "342")
+                    {
+                        var auditData = userInfoAudit(inpatientInfoData.Data.PatientName,
+                            inpatientInfoData.Data.IdCardNo,
+                            baseInfoNew.Inpatient.PatientName,
+                            baseInfoNew.Inpatient.IdCardNo);
+                        if (auditData === true)
+                        {
+                            getBirthHospitalizationRegisterParam(data);
+                        }
+                    }
+                    else
+                    {
+                        getBirthHospitalizationRegisterParam(data);
+                    }
+                   
                     return false; 
                 });
             //------添加医保诊断

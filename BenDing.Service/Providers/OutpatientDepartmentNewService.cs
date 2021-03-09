@@ -1286,7 +1286,12 @@ namespace BenDing.Service.Providers
                 BackParam = strXmlBackParam
             };
             ////存基层
-            _webBasicRepository.SaveXmlData(saveXml);
+            if (iniData.SettlementNo != CommonHelp.GuidToStr(id.ToString()))
+            {
+                _webBasicRepository.SaveXmlData(saveXml);
+            }
+
+          
             var updateParamData = new UpdateMedicalInsuranceResidentSettlementParam()
             {
                 UserId = param.UserId,

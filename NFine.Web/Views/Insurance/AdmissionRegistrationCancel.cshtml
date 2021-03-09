@@ -76,7 +76,7 @@
                   
                 </div>
                 <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
-                    <button type="submit" Id="HospitalizationRegisterCancel" lay-submit disabled class="layui-btn layui-btn-disabled layui-btn-radius">取消医保入院登记</button>
+                    <button type="submit" Id="HospitalizationRegisterCancel" lay-submit disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">取消医保入院登记</button>
                 </div>
             </div>
 
@@ -145,7 +145,7 @@
                             isBirthHospital = data.Data.IsBirthHospital;
                             insuranceType = data.Data.InsuranceType;
                             jsonToForm(data.Data.InpatientInfo, "LAY-form-render");
-                            buttonStatus('HospitalizationRegisterCancel', true)
+                            buttonStatus('HospitalizationRegisterCancel', true);
                             //HospitalizationRegisterCancel
                             //layer.msg('费用上传成功', { icon: 6, shade: 0.1, skin: 'layui-layer-molv' });
                         }

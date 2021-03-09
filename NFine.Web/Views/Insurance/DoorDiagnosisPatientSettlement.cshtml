@@ -162,18 +162,19 @@
                 </div>
             </div>
             <div class="layui-form-item" id="queryDataDiv" style="text-align: center; margin-top: 20px;">
-                <button type="button" Id="queryData" class="layui-btn layui-btn-radius">查询</button>
+                <button type="button" Id="queryData"   class="layui-btn layui-btn-radius">查询</button>
+             
             </div>
             <div class="layui-form-item" id="DoorDiagnosisPreSettlementDiv" style="text-align: center; margin-top: 20px;">
                 <button type="button" Id="CatalogPairCode" class="layui-btn layui-btn-radius">项目对码</button>
-                <button type="button" Id="SettlementCard" class="layui-btn layui-btn-disabled layui-btn-radius">职工刷卡结算</button>
-                <button type="button" Id="ResidentSettlementCard" class="layui-btn layui-btn-disabled layui-btn-radius">居民结算</button>
-                <button type="button" Id="MedicalFeeRegistration" class="layui-btn layui-btn-disabled layui-btn-radius">居民报账一般诊疗费登记</button>
-                <button type="button" Id="DoorDiagnosisPreSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">职工计划生育预结算</button>
-                <button type="button" Id="OutpatientNationEcTrans" class="layui-btn layui-btn-disabled layui-btn-radius">医保电子凭证结算</button>
+                <button type="button" Id="SettlementCard" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">职工刷卡结算</button>
+                <button type="button" Id="ResidentSettlementCard" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">居民结算</button>
+                <button type="button" Id="MedicalFeeRegistration" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">居民报账一般诊疗费登记</button>
+                <button type="button" Id="DoorDiagnosisPreSettlement" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">职工计划生育预结算</button>
+                <button type="button" Id="OutpatientNationEcTrans" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">医保电子凭证结算</button>
             </div>
             <div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="DoorDiagnosisSettlementDiv">
-                <button type="button" Id="DoorDiagnosisSettlement" class="layui-btn layui-btn-disabled layui-btn-radius">职工计划生结算</button>
+                <button type="button" Id="DoorDiagnosisSettlement"  disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">职工计划生结算</button>
             </div>
          
             <div class="layui-card-body" lay-size="sm">
@@ -227,6 +228,8 @@
             return resultData;
         }
 
+      
+   
         baseInfo.PageFunction.FunctionName = "Outpatient";
 
         var passWordKey = "1";
@@ -772,9 +775,19 @@
                 msgError(activeJsonData.Message);
                 return false;
             } else {
+               
                 var activeJsonInfo = JSON.parse(activeJsonData.Data);
                 insuranceNo = activeJsonInfo.WorkersCardNo;
-                return true;
+                var auditData = userInfoAudit(outpatientData.PatientName,
+                    outpatientData.IdCardNo,
+                    activeJsonData.PO_XM,
+                    activeJsonData.PO_SFZH);
+                if (auditData === false) {
+                    return false;
+                } else {
+                    return true;
+                }
+              
             }
           
            
@@ -995,6 +1008,7 @@
         });
         //查询
         $('#queryData').on('click', function () {
+           
             var settlementVal = $('input[name="Settlement"]:checked').val();
             if (settlementVal === "4" || settlementVal === "5") {
                 if ($("#ContactPhone").val() === "") {

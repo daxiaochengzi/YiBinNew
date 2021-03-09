@@ -133,7 +133,7 @@
                     <button type="button" disabled class="layui-btn layui-btn-disabled layui-btn-radius" id="queryData">
                         查询
                     </button>
-                    <button type="submit" Id="register" lay-submit lay-filter="register" disabled class="layui-btn layui-btn-disabled layui-btn-radius">登记</button>
+                    <button type="submit" Id="register" lay-submit lay-filter="register" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">登记</button>
                 </div>
             </div>
 
@@ -491,7 +491,7 @@
                     
                     var auditData = userInfoAudit(inpatientInfoData.Data.PatientName, inpatientInfoData.Data.IdCardNo, baseInfoNew.Inpatient.PatientName, baseInfoNew.Inpatient.IdCardNo);
                     if (auditData === true) {
-                        getHospitalizationRegisterParam(data);
+                       getHospitalizationRegisterParam(data);
                       }
                   
                     return false; 

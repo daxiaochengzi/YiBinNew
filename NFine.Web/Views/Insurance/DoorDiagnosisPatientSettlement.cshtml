@@ -207,7 +207,6 @@
         $("#AccountPaymentDiv").hide();
         $("#DoorDiagnosisPreSettlementDiv").hide();
         $("#DoorDiagnosisSettlementDiv").hide();
-    
         $("#queryDataDiv").hide();
         $("#passwordDiv").hide();
         //门诊病人信息
@@ -778,16 +777,7 @@
                
                 var activeJsonInfo = JSON.parse(activeJsonData.Data);
                 insuranceNo = activeJsonInfo.WorkersCardNo;
-                var auditData = userInfoAudit(outpatientData.PatientName,
-                    outpatientData.IdCardNo,
-                    activeJsonData.PO_XM,
-                    activeJsonData.PO_SFZH);
-                if (auditData === false) {
-                    return false;
-                } else {
-                    return true;
-                }
-              
+                return true;
             }
           
            

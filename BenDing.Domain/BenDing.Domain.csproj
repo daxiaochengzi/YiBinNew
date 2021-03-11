@@ -311,6 +311,7 @@
     <Compile Include="Models\Params\UI\MedicalInsuranceXmlUiParam.cs" />
     <Compile Include="Models\Params\UI\ModifyWorkerHospitalizationUiParam.cs" />
     <Compile Include="Models\Params\UI\MonthlyHospitalizationUiParam.cs" />
+    <Compile Include="Models\Params\UI\OutpatientDetailQueryUiParam.cs" />
     <Compile Include="Models\Params\UI\OutpatientExclusionUiParam.cs" />
     <Compile Include="Models\Params\UI\OutpatientNationEcTransUiParam.cs" />
     <Compile Include="Models\Params\UI\OutpatientPairCodeUiParam.cs" />

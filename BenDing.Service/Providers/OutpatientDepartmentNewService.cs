@@ -8,6 +8,7 @@ using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.HisXml;
+using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.OutpatientDepartment;
 using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
@@ -846,6 +847,31 @@ namespace BenDing.Service.Providers
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
             return iniData;
         }
+        /// <summary>
+        /// 门诊明细查询
+        /// </summary>
+        public  List<BaseOutpatientDetailDto> OutpatientDetailQuery(OutpatientDetailQueryUiParam param)
+        {
+            var resultData = new List<BaseOutpatientDetailDto>();
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            userBase.TransKey = param.TransKey;
+            var outpatientDetail = _serviceBasicService.OutpatientMedicalInsuranceInput(new OutpatientDetailParam()
+            {
+                User = userBase,
+                BusinessId = param.BusinessId,
+                //IsSave = true
+            });
+
+            var detailData = outpatientDetail.DetailList;
+            foreach (var item in detailData)
+            {
+                var itemData = item;
+                itemData.Amount = item.UnitPrice * item.Quantity;
+                resultData.Add(itemData);
+            }
+            return resultData;
+        }
+
         /// <summary>
         /// 居民电子凭证支付参数
         /// </summary>

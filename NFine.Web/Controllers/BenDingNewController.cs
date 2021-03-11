@@ -489,6 +489,27 @@ namespace NFine.Web.Controllers
 
         }
         /// <summary>
+        /// 门诊明细查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ApiJsonResultData OutpatientDetailQuery([FromUri]OutpatientDetailQueryUiParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var queryData = _outpatientDepartmentNewService.OutpatientDetailQuery(param);
+                var data = new
+                {
+                    data = queryData,
+                    count = queryData.Count(),
+                    NewAmount= queryData.Sum(c=>c.Amount)
+                };
+                y.Data = data;
+
+            });
+        }
+        /// <summary>
         /// 获取门诊居民电子凭证参数
         /// </summary>
         /// <param name="param"></param>
@@ -642,6 +663,62 @@ namespace NFine.Web.Controllers
             });
 
         }
+        /// <summary>
+        /// 门诊费用差值
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData OutpatientAdjustmentDifferenceValue([FromBody]AdjustmentDifferenceValueParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                List<string> idList = new List<string>();
+                idList.Add(param.Id);
+                param.UnitPrice = CommonHelp
+                    .ValueToFour(Convert.ToDecimal(param.Amount) / Convert.ToDecimal(param.Quantity)).ToString(CultureInfo.InvariantCulture);
+                //费用数据
+                var feeDataList = _hisSqlRepository.InpatientInfoDetailQuery(new InpatientInfoDetailQueryParam()
+                {
+                    IdList = idList,
+                    UploadMark = 0,
+
+                });
+                if (feeDataList != null && feeDataList.Any())
+                {
+                    var feeData = feeDataList.FirstOrDefault();
+                    if (string.IsNullOrWhiteSpace(feeData.ProjectCode)) throw new Exception("当前项目未医保对码,不能调整!!!");
+                    string sql = $@"update [dbo].[HospitalizationFee] set [UnitPrice]={param.UnitPrice},[Quantity]={param.Quantity},[Amount]={param.Amount},
+                                 [AdjustmentDifferenceValue]={feeData.Amount} where id='{param.Id}'";
+                    _hisSqlRepository.ExecuteSql(sql);
+                    _systemManageRepository.AddHospitalLog(new AddHospitalLogParam()
+                    {
+                        BusinessId = param.BusinessId,
+                        RelationId = Guid.Parse(param.Id),
+                        Remark = "调整费用明细",
+                        User = userBase,
+                        JoinOrOldJson = JsonConvert.SerializeObject(feeData)
+
+
+                    });
+                }
+                else
+                {
+
+                    throw new Exception("查询数据失败");
+                }
+
+
+                //var userBase = _webServiceBasicService.GetUserBaseInfo(param.UserId);
+                //处方上传
+                //var data = _residentMedicalInsuranceNewService.GetPrescriptionUploadParam(param, userBase);
+                //y.Data = data;
+            });
+
+
+
+        }
+
         #endregion
         #region 公共信息
         /// <summary>
@@ -1573,9 +1650,7 @@ namespace NFine.Web.Controllers
                 if (feeDataList != null && feeDataList.Any())
                 {
                     var feeData = feeDataList.FirstOrDefault();
-                    if (string.IsNullOrWhiteSpace(feeData.ProjectCode)) throw new Exception("当前项目未医保对码,不能调整!!!");
-                   
-
+                    if (string.IsNullOrWhiteSpace(feeData.ProjectCode)) throw new Exception("当前项目未医保对码,不能调整!!!"); 
                     string sql = $@"update [dbo].[HospitalizationFee] set [UnitPrice]={param.UnitPrice},[Quantity]={param.Quantity},[Amount]={param.Amount},
                                  [AdjustmentDifferenceValue]={feeData.Amount} where id='{param.Id}'";
                     _hisSqlRepository.ExecuteSql(sql);
@@ -1603,7 +1678,10 @@ namespace NFine.Web.Controllers
                 //y.Data = data;
             });
 
+           
+
         }
+      
 
         /// <summary>
         ///  删除中心库

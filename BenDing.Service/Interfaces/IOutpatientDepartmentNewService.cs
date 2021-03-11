@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BenDing.Domain.Models.Dto.JsonEntity;
 using BenDing.Domain.Models.Dto.OutpatientDepartment;
+using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Dto.Workers;
 using BenDing.Domain.Models.Params.OutpatientDepartment;
 using BenDing.Domain.Models.Params.UI;
@@ -98,6 +99,12 @@ namespace BenDing.Service.Interfaces
         /// </summary>
         /// <param name="param"></param>
         NationEcTransDto OutpatientNationEcTrans(OutpatientNationEcTransUiParam param);
+        /// <summary>
+        /// 门诊明细查询
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+         List<BaseOutpatientDetailDto> OutpatientDetailQuery(OutpatientDetailQueryUiParam param);
         /// <summary>
         /// 居民电子凭证支付参数
         /// </summary>

@@ -938,7 +938,7 @@ namespace BenDing.Service.Providers
             resultData.TotalAmount = rowDataListNew.Select(d => d.TotalAmount).Sum();
             return XmlSerializeHelper.HisXmlSerialize(resultData);
         }
-       
+
         ///// <summary>
         ///// 检查当前病人是否已经结算
         ///// </summary>
@@ -1161,7 +1161,6 @@ namespace BenDing.Service.Providers
             resultData.TotalAmount = rowDataListNew.Select(d => d.TotalAmount).Sum();
             return XmlSerializeHelper.MedicalInsuranceXmlSerialize(resultData);
         }
-       
         /// <summary>
         /// 门诊居民预结算
         /// </summary>

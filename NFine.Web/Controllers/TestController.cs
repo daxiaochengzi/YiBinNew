@@ -368,22 +368,36 @@ namespace NFine.Web.Controllers
                 var userBase = webServiceBasicService.GetUserBaseInfo(param.UserId);
                 userBase.TransKey = param.TransKey;
 
-                //回参构建
-                var xmlData = new OutpatientDepartmentCostCancelXml()
-                {
-                    SettlementNo = param.SettlementNo
-                };
-                var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
-                var saveXml = new SaveXmlDataParam()
-                {
-                    User = userBase,
-                    MedicalInsuranceBackNum = "Qxjs",
-                    MedicalInsuranceCode = "42MZ",
-                    BusinessId = param.BusinessId,
-                    BackParam = strXmlBackParam
-                };
-                //存基层
-                webServiceBasic.SaveXmlData(saveXml);
+
+
+                var resultData = new InpatientInfoDto();
+                var xmlData = new MedicalInsuranceXmlDto();
+                xmlData.BusinessId = param.BusinessId;
+                xmlData.HealthInsuranceNo = "41";
+                xmlData.TransactionId = userBase.TransKey;
+                xmlData.AuthCode = userBase.AuthCode;
+                xmlData.UserId = userBase.UserId;
+                xmlData.OrganizationCode = userBase.OrganizationCode;
+                var data = webServiceBasic.HIS_Interface("39", JsonConvert.SerializeObject(xmlData));
+
+
+
+                ////回参构建
+                //var xmlData = new OutpatientDepartmentCostCancelXml()
+                //{
+                //    SettlementNo = param.SettlementNo
+                //};
+                //var strXmlBackParam = XmlSerializeHelper.HisXmlSerialize(xmlData);
+                //var saveXml = new SaveXmlDataParam()
+                //{
+                //    User = userBase,
+                //    MedicalInsuranceBackNum = "Qxjs",
+                //    MedicalInsuranceCode = "46",
+                //    BusinessId = param.BusinessId,
+                //    BackParam = strXmlBackParam
+                //};
+                ////存基层
+                //webServiceBasic.SaveXmlData(saveXml);
 
                 ////回参构建
                 //var xmlData = new HospitalSettlementCancelXml()

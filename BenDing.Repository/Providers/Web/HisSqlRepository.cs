@@ -333,7 +333,8 @@ namespace BenDing.Repository.Providers.Web
                 {
                     DiseaseCoding = dr["编码"].ToString(),
                     DiseaseName = dr["名称"].ToString(),
-                 
+                   MnemonicCode = dr["拼音助记码"].ToString()
+
                 };
                 addIcd10Data.Add(item);
                 if (addIcd10Data.Count() >= 300)

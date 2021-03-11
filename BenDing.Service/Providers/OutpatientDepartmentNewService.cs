@@ -879,6 +879,11 @@ namespace BenDing.Service.Providers
                     {
                         resultData.Add(adjustmentDifferenceData);
                     }
+                    else
+                    {
+                        itemData.Amount = item.UnitPrice * item.Quantity;
+                        resultData.Add(itemData);
+                    }
                 }
                 else
                 {

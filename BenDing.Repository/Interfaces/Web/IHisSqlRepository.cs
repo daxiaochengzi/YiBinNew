@@ -97,11 +97,18 @@ namespace BenDing.Repository.Interfaces.Web
         /// <param name="param"></param>
         void SaveOutpatientDetail(UserInfoDto user, List<BaseOutpatientDetailDto> param);
         /// <summary>
-        /// 查询门诊病人明细
+        /// 查询门诊病人明细分页
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
         Dictionary<int, List<BaseOutpatientDetailDto>> QueryOutpatientDetail(QueryOutpatientDetailParam param);
+
+        /// <summary>
+        /// 查询门诊病人List
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        List<BaseOutpatientDetailDto> QueryOutpatientDetailList(QueryOutpatientDetailListParam param);
         /// <summary>
         /// 基层数据批量审核
         /// </summary>

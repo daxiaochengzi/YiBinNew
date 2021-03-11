@@ -863,11 +863,31 @@ namespace BenDing.Service.Providers
             });
 
             var detailData = outpatientDetail.DetailList;
+            var adjustmentDifferenceValue=_hisSqlRepository.QueryOutpatientDetailList(new QueryOutpatientDetailListParam()
+            {
+                IsAdjustmentDifferenceValue =1,
+                OutpatientNo = outpatientDetail.BaseOutpatient.OutpatientNumber
+            });
             foreach (var item in detailData)
             {
                 var itemData = item;
-                itemData.Amount = item.UnitPrice * item.Quantity;
-                resultData.Add(itemData);
+                if (adjustmentDifferenceValue != null && adjustmentDifferenceValue.Any())
+                {
+                    var adjustmentDifferenceData = adjustmentDifferenceValue
+                        .FirstOrDefault(c => c.DetailId == item.DetailId);
+                    if (adjustmentDifferenceData != null)
+                    {
+                        resultData.Add(adjustmentDifferenceData);
+                    }
+                }
+                else
+                {
+                    
+                    itemData.Amount = item.UnitPrice * item.Quantity;
+                    resultData.Add(itemData);
+                }
+
+              
             }
             return resultData;
         }

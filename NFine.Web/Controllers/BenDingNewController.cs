@@ -501,14 +501,34 @@ namespace NFine.Web.Controllers
                 var queryData = _outpatientDepartmentNewService.OutpatientDetailQuery(param);
                 var data = new
                 {
-                    data = queryData,
-                    count = queryData.Count(),
-                    NewAmount= queryData.Sum(c=>c.Amount)
+                    data = queryData.PageData,
+                    count = queryData.PageData.Count(),
+                    NewAmount= queryData.NewTotalCost,
+                    MedicalInsuranceTotalCost=  queryData.MedicalInsuranceTotalCost
                 };
                 y.Data = data;
 
             });
         }
+        /// <summary>
+        /// 清除门诊调差数据
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ApiJsonResultData DeleteOutpatientAdjustmentDifference([FromBody]UiBaseDataParam param)
+        {
+            return new ApiJsonResultData(ModelState).RunWithTry(y =>
+            {
+                string sql = $@"update [dbo].[OutpatientFee] set IsDelete=1 where    [PatientId] is null  and [OutpatientNo]=''
+                       and IsDelete=0 and IsAdjustmentDifference=1 ";
+                       _hisSqlRepository.ExecuteSql(sql);
+             
+                //  y.Data = data;
+            });
+
+        }
+      
         /// <summary>
         /// 获取门诊居民电子凭证参数
         /// </summary>

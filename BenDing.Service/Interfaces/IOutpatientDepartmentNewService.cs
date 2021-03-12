@@ -104,7 +104,7 @@ namespace BenDing.Service.Interfaces
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-         List<BaseOutpatientDetailDto> OutpatientDetailQuery(OutpatientDetailQueryUiParam param);
+        OutpatientDetailQueryDto OutpatientDetailQuery(OutpatientDetailQueryUiParam param);
         /// <summary>
         /// 居民电子凭证支付参数
         /// </summary>

@@ -850,9 +850,10 @@ namespace BenDing.Service.Providers
         /// <summary>
         /// 门诊明细查询
         /// </summary>
-        public  List<BaseOutpatientDetailDto> OutpatientDetailQuery(OutpatientDetailQueryUiParam param)
+        public OutpatientDetailQueryDto OutpatientDetailQuery(OutpatientDetailQueryUiParam param)
         {
-            var resultData = new List<BaseOutpatientDetailDto>();
+            var resultData = new OutpatientDetailQueryDto();
+            var resultDataPage = new List<BaseOutpatientDetailDto>();
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
             var outpatientDetail = _serviceBasicService.OutpatientMedicalInsuranceInput(new OutpatientDetailParam()
@@ -877,23 +878,28 @@ namespace BenDing.Service.Providers
                         .FirstOrDefault(c => c.DetailId == item.DetailId);
                     if (adjustmentDifferenceData != null)
                     {
-                        resultData.Add(adjustmentDifferenceData);
+                        resultDataPage.Add(adjustmentDifferenceData);
                     }
                     else
                     {
                         itemData.Amount = item.UnitPrice * item.Quantity;
-                        resultData.Add(itemData);
+                        resultDataPage.Add(itemData);
                     }
                 }
                 else
                 {
                     
                     itemData.Amount = item.UnitPrice * item.Quantity;
-                    resultData.Add(itemData);
+                    resultDataPage.Add(itemData);
                 }
 
               
             }
+
+            resultData.PageData = resultDataPage;
+            resultData.OutpatientNumber = outpatientDetail.BaseOutpatient.OutpatientNumber;
+            resultData.NewTotalCost = outpatientDetail.NewTotalCost;
+            resultData.MedicalInsuranceTotalCost = resultDataPage.Sum(c => c.Amount);
             return resultData;
         }
 

@@ -163,15 +163,17 @@
             </div>
             <div class="layui-form-item" id="queryDataDiv" style="text-align: center; margin-top: 20px;">
                 <button type="button" Id="queryData"   class="layui-btn layui-btn-radius">查询</button>
+                <button type="button" Id="AdjustmentDifference" class="layui-btn layui-btn-radius">调差</button>
              
             </div>
             <div class="layui-form-item" id="DoorDiagnosisPreSettlementDiv" style="text-align: center; margin-top: 20px;">
                 <button type="button" Id="CatalogPairCode" class="layui-btn layui-btn-radius">项目对码</button>
+                @*<button type="button" Id="AdjustmentDifference" class="layui-btn layui-btn-radius">调差</button>*@
                 <button type="button" Id="SettlementCard" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">职工刷卡结算</button>
                 <button type="button" Id="ResidentSettlementCard" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">居民结算</button>
                 <button type="button" Id="MedicalFeeRegistration" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">居民报账一般诊疗费登记</button>
                 <button type="button" Id="DoorDiagnosisPreSettlement" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">职工计划生育预结算</button>
-                <button type="button" Id="OutpatientNationEcTrans" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">医保电子凭证结算</button>
+                <button type="button" Id="OutpatientNationEcTrans" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">电子凭证结算</button>
             </div>
             <div class="layui-form-item" style="text-align: center; margin-top: 20px;" id="DoorDiagnosisSettlementDiv">
                 <button type="button" Id="DoorDiagnosisSettlement"  disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">职工计划生结算</button>
@@ -237,10 +239,10 @@
         //新插件对象
         var activeXNew = document.getElementById("CSharpActiveX"); 
        // 插件检查
-        var verification = DetectActiveX();
-        if (verification === false) {
-            return false;
-        }
+        //var verification = DetectActiveX();
+        //if (verification === false) {
+        //    return false;
+        //}
         //是否使用加密键盘
         function isPassKey() {
             //var activeX = document.getElementById("CSharpActiveX");
@@ -1064,6 +1066,32 @@
                 fixed: false, //不固定
                 maxmin: true,
                 content: hostPage + '/OutpatientDirectoryCode' + params,
+                end: function() { //无论是确认还是取消，只要层被销毁了，end都会执行，不携带任何参数。layer.open关闭事件
+                   
+                   
+                }
+            });
+        });
+
+
+        //调差
+        $('#AdjustmentDifference').on('click', function () {
+            var params =
+                "?EmpId=" +
+                    $("#empid").val() +
+                    "&BId=" +
+                    $("#bid").val() +
+                    "&TransKey=" +
+                    $("#transkey").val();
+            layer.open({
+                id: 'OutpatientAdjustmentDifference',
+                type: 2,
+                title: '调差',
+                shadeClose: true, //点击遮罩关闭层
+                area: ['980px', '550px'],
+                fixed: false, //不固定
+                maxmin: true,
+                content: hostPage + '/OutpatientAdjustmentDifference' + params,
                 end: function() { //无论是确认还是取消，只要层被销毁了，end都会执行，不携带任何参数。layer.open关闭事件
                    
                    

@@ -504,7 +504,7 @@ namespace NFine.Web.Controllers
                     data = queryData.PageData,
                     count = queryData.PageData.Count(),
                     NewAmount= queryData.NewTotalCost,
-                    MedicalInsuranceTotalCost=  queryData.MedicalInsuranceTotalCost
+                    MedicalInsuranceTotalCost=CommonHelp.ValueToDouble(queryData.MedicalInsuranceTotalCost)
                 };
                 y.Data = data;
 

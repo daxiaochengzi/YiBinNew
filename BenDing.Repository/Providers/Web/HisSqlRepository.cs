@@ -786,7 +786,7 @@ namespace BenDing.Repository.Providers.Web
                     if (!string.IsNullOrWhiteSpace(param.OutpatientNo))
                         querySql += $" and OutpatientNo='{param.OutpatientNo}'";
                     if (param.IsAdjustmentDifferenceValue==1)
-                        querySql += " and IsAdjustmentDifferenceValue=1";
+                        querySql += " and IsAdjustmentDifference=1";
                     
                     var data = sqlConnection.Query<BaseOutpatientDetailDto>(querySql);
                     sqlConnection.Close();

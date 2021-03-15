@@ -89,7 +89,7 @@ namespace BenDing.Domain.Models.Params.Web
         /// <summary>
         /// 不统计一般诊疗费
         /// </summary>
-        public int? NotStatisticsMedicalExpenses { get; set; } = null;
+        public int NotStatisticsMedicalExpenses { get; set; } = 0;
 
     }
 }

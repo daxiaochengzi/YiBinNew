@@ -360,6 +360,7 @@
             }
             //居民无卡结算
             if (settlementVal === "5" && baseInfoNew.Inpatient.InsuranceType === "342") {
+                $("#NotStatisticsMedicalExpenses").removeAttr("disabled");
                 if (baseInfoNew.Inpatient.ResidentInsuranceBalance === 0) {
                     buttonStatus("ResidentSettlementCard", false);
                     buttonStatus("MedicalFeeRegistration", false);

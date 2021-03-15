@@ -1110,7 +1110,7 @@ namespace BenDing.Service.Providers
                 CarryOver= iniData.TurnSettlementBalanceAmount,
                 ReimbursementExpensesAmount = iniData.ReimbursementAmount,
                 PatientId = id.ToString(),
-                NotStatisticsMedicalExpenses = !string.IsNullOrWhiteSpace(param.NotStatisticsMedicalExpenses) ? 1 : (int?)null
+                NotStatisticsMedicalExpenses = !string.IsNullOrWhiteSpace(param.NotStatisticsMedicalExpenses) ? 1 : 0
 
             };
             //存入中间层
@@ -1343,7 +1343,7 @@ namespace BenDing.Service.Providers
                 CarryOver = iniData.TurnSettlementBalanceAmount,
                 ReimbursementExpensesAmount = iniData.ReimbursementAmount,
                 PatientId = id.ToString(),
-                NotStatisticsMedicalExpenses = !string.IsNullOrWhiteSpace(param.NotStatisticsMedicalExpenses)?1:(int?) null
+                NotStatisticsMedicalExpenses = !string.IsNullOrWhiteSpace(param.NotStatisticsMedicalExpenses) ? 1 : 0
             };
         
             //存入中间层

@@ -676,7 +676,7 @@ namespace BenDing.Service.Providers
             return resultData;
         }
         /// <summary>
-        /// 获取门诊电子卡参数
+        /// 获取门诊职工电子凭证参数
         /// </summary>
         public string OutpatientNationEcTransParam(OutpatientNationEcTransUiParam param)
         {
@@ -707,7 +707,12 @@ namespace BenDing.Service.Providers
           
             resultData.DownAccountType = "1";
             var outpatientDetailPerson = outpatientDetail.DetailList;
-           
+            var adjustmentDifferenceValue = _hisSqlRepository.QueryOutpatientDetailList(new QueryOutpatientDetailListParam()
+            {
+                IsAdjustmentDifferenceValue = 1,
+                OutpatientNo = outpatientDetail.BaseOutpatient.OutpatientNumber
+            });
+
             //升序
             var dataSort = outpatientDetailPerson.OrderBy(c => c.BillTime).ToArray();
             int num = 0;
@@ -724,17 +729,35 @@ namespace BenDing.Service.Providers
                         Quantity = item.Quantity,
                         TotalAmount = item.UnitPrice * item.Quantity,
                         DirectoryName = item.DirectoryName,
-                        DirectoryCode =CommonHelp.GuidToStr(item.DirectoryCode),
+                        DirectoryCode = CommonHelp.GuidToStr(item.DirectoryCode),
 
                     };
+                    //获取调差数据
+                    if (adjustmentDifferenceValue != null && adjustmentDifferenceValue.Any())
+                    {
+                        var adjustmentDifferenceData = adjustmentDifferenceValue
+                            .FirstOrDefault(c => c.DetailId == item.DetailId);
+
+                        if (adjustmentDifferenceData != null)
+                        {
+                            row.TotalAmount = adjustmentDifferenceData.Amount;
+                            row.UnitPrice = adjustmentDifferenceData.UnitPrice;
+                            row.Quantity = adjustmentDifferenceData.UnitPrice;
+                        }
+                    
+                    }
+
+                  
 
                     rowDataList.Add(row);
                     num++;
                 }
             }
             //门诊调差
-            var rowDataListNew = OutpatientNationEcTransAdjustment(rowDataList, outpatientDetail.NewTotalCost, CommonHelp.ValueToDouble(outpatientDetail.OldTotalCost));
-            resultData.DownAccountAmount = CommonHelp.ValueToDouble(rowDataListNew.Sum(d=>d.TotalAmount));
+            var rowDataListNew = OutpatientNationEcTransAdjustment(rowDataList, outpatientDetail.NewTotalCost, CommonHelp.ValueToDouble(rowDataList.Sum(c => c.TotalAmount)));
+            var downAccountAmount = CommonHelp.ValueToDouble(rowDataListNew.Sum(d => d.TotalAmount));
+            if (outpatientDetail.NewTotalCost!= downAccountAmount) throw  new Exception("医保与基层费用不等,请使用调差功能!!!");
+            resultData.DownAccountAmount = downAccountAmount;
             resultData.RowDataList = rowDataListNew;
             resultData.Nums = rowDataListNew.Count();
 
@@ -742,7 +765,7 @@ namespace BenDing.Service.Providers
             return XmlSerializeHelper.HisXmlSerialize(resultData) ;
         }
         /// <summary>
-        /// 门诊电子医保
+        /// 门诊职工电子凭证
         /// </summary>
         /// <param name="param"></param>
         public NationEcTransDto OutpatientNationEcTrans(OutpatientNationEcTransUiParam param)
@@ -756,6 +779,7 @@ namespace BenDing.Service.Providers
             dataJson.SelfPayAmount= iniData.SelfPayAmount;
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
+        
             //门诊病人信息存储
             var id = Guid.NewGuid();
             var outpatientParam = new GetOutpatientPersonParam()
@@ -767,6 +791,8 @@ namespace BenDing.Service.Providers
             };
             var outpatientPerson = _serviceBasicService.GetOutpatientPerson(outpatientParam);
             if (outpatientPerson == null) throw new Exception("his中未获取到当前病人!!!");
+            string sql = $@"update  [dbo].[OutpatientFee] set IsDelete=1 where [PatientId] is null and [OutpatientNo]='{outpatientPerson.OutpatientNumber}' and IsDelete=0";
+            _hisSqlRepository.ExecuteSql(sql);
             var queryResidentParam = new QueryMedicalInsuranceResidentInfoParam()
             {
                 BusinessId = param.BusinessId,
@@ -1029,8 +1055,6 @@ namespace BenDing.Service.Providers
             resultData = AutoMapper.Mapper.Map<OutpatientNationEcTransResidentBackDto>(iniData);
             var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
             userBase.TransKey = param.TransKey;
-            
-       
             //门诊病人信息存储
             var id = Guid.NewGuid();
             var outpatientParam = new GetOutpatientPersonParam()
@@ -1085,7 +1109,8 @@ namespace BenDing.Service.Providers
                 SettlementType = "3",
                 CarryOver= iniData.TurnSettlementBalanceAmount,
                 ReimbursementExpensesAmount = iniData.ReimbursementAmount,
-                PatientId = id.ToString()
+                PatientId = id.ToString(),
+                NotStatisticsMedicalExpenses = !string.IsNullOrWhiteSpace(param.NotStatisticsMedicalExpenses) ? 1 : (int?)null
 
             };
             //存入中间层
@@ -1317,8 +1342,10 @@ namespace BenDing.Service.Providers
                 SettlementType = "2",
                 CarryOver = iniData.TurnSettlementBalanceAmount,
                 ReimbursementExpensesAmount = iniData.ReimbursementAmount,
-                PatientId = id.ToString()
+                PatientId = id.ToString(),
+                NotStatisticsMedicalExpenses = !string.IsNullOrWhiteSpace(param.NotStatisticsMedicalExpenses)?1:(int?) null
             };
+        
             //存入中间层
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateData);
             // 回参构建
@@ -1780,16 +1807,16 @@ namespace BenDing.Service.Providers
         /// </summary>
         /// <param name="dataList"></param>
         /// <param name="newTotalAmount"></param>
-        /// <param name="oldTotalAmount"></param>
+        /// <param name="medicalInsuranceTotalAmount">医保合计金额</param>
         /// <returns></returns>
         private List<NationEcTransRow> OutpatientNationEcTransAdjustment(List<NationEcTransRow> dataList,
-            decimal newTotalAmount, decimal oldTotalAmount)
+            decimal newTotalAmount, decimal medicalInsuranceTotalAmount)
         {
             var resultData = new List<NationEcTransRow>();
 
-            if (newTotalAmount > oldTotalAmount)
+            if ((newTotalAmount - medicalInsuranceTotalAmount)!= 0)
             {
-                var unitPrice = newTotalAmount - oldTotalAmount;
+                var unitPrice = newTotalAmount - medicalInsuranceTotalAmount;
                 var quantityOne = resultData.FirstOrDefault(c => c.Quantity == 1);
 
                 if (quantityOne != null)
@@ -1800,9 +1827,9 @@ namespace BenDing.Service.Providers
 
                         if (item.DirectoryCode == quantityOne.DirectoryCode)
                         {
-                            var itemNew = item;
+                            var itemNew = item;//大于加小于减
                             itemNew.UnitPrice = item.UnitPrice + unitPrice;
-                            itemNew.TotalAmount = (item.UnitPrice + unitPrice) * item.Quantity;
+                            itemNew.TotalAmount = itemNew.UnitPrice * item.Quantity;
                             resultData.Add(itemNew);
                         }
                         resultData.Add(item);

@@ -48,5 +48,9 @@ namespace BenDing.Domain.Models.Params.UI
         /// 联系地址
         /// </summary>
         public string ContactAddress { get; set; }
+        /// <summary>
+        /// 不统计一般诊疗费
+        /// </summary>
+        public  string NotStatisticsMedicalExpenses { get; set; }
     }
 }

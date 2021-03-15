@@ -76,7 +76,7 @@ namespace BenDing.Repository.Providers.Web
                         else if (!string.IsNullOrWhiteSpace(param.SettlementTransactionId))
                         {
                             strSql = $@" update MedicalInsurance set SettlementUserId='{param.UserId}',SettlementTime=GETDATE(),MedicalInsuranceState={(int)param.MedicalInsuranceState},
-                                    OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},CarryOver={param.CarryOver},
+                                    OtherInfo='{param.OtherInfo}',MedicalInsuranceAllAmount={param.MedicalInsuranceAllAmount},CarryOver={param.CarryOver},NotStatisticsMedicalExpenses={param.NotStatisticsMedicalExpenses}
                                     SelfPayFeeAmount= {param.SelfPayFeeAmount},ReimbursementExpensesAmount={param.ReimbursementExpensesAmount},PatientId='{param.PatientId}',
                                     SettlementNo='{param.SettlementNo}',SettlementTransactionId='{param.SettlementTransactionId}',SettlementType='{param.SettlementType}'
                                     where Id='{param.Id}' ";
@@ -263,7 +263,8 @@ namespace BenDing.Repository.Providers.Web
                     sqlConnection.Open();
                     string querySql = @"
                              select [Id],[ProjectCode],[ProjectName],[ProjectCodeType],Unit,MnemonicCode,Formulation,ProjectLevel,
-                             Manufacturer,QuasiFontSize,Specification,Remark,NewCodeMark,NewUpdateTime,CreateTime,[StartTime],[EndTime] from [dbo].[MedicalInsuranceProject] 
+                             Manufacturer,QuasiFontSize,Specification,Remark,NewCodeMark,NewUpdateTime,CreateTime,[StartTime],[EndTime],
+                             ZeroBlock,OneBlock,TwoBlock,ThreeBlock,FourBlock from [dbo].[MedicalInsuranceProject] 
                              where  IsDelete=0 and EffectiveSign=1";
                     string countSql = @"select count(*) from [dbo].[MedicalInsuranceProject] where  IsDelete=0  and EffectiveSign=1";
                     string whereSql = "";
@@ -319,7 +320,7 @@ namespace BenDing.Repository.Providers.Web
                                 {
                                     ProjectName = t.ProjectName,
                                     ProjectCode = t.ProjectCode,
-                                     Id = t.Id,
+                                    Id = t.Id,
                                     MnemonicCode = t.MnemonicCode,
                                     Formulation = t.Formulation,
                                     Remark = t.Remark,
@@ -335,9 +336,12 @@ namespace BenDing.Repository.Providers.Web
                                     Unit = t.Unit,
                                     CreateTime=t.CreateTime,
                                     EndTime = t.EndTime,
-                                    StartTime = t.StartTime
-                                        
-
+                                    StartTime = t.StartTime,
+                                    ZeroBlock= CommonHelp.ValueToFour(t.ZeroBlock),
+                                    OneBlock = CommonHelp.ValueToFour(t.OneBlock),
+                                    TwoBlock = CommonHelp.ValueToFour(t.TwoBlock),
+                                    ThreeBlock = CommonHelp.ValueToFour(t.ThreeBlock),
+                                    FourBlock = CommonHelp.ValueToFour(t.FourBlock)
                                 }
                             ).ToList();
                     resultData.Add(totalPageCount, dataList);

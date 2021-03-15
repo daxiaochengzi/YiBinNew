@@ -60,8 +60,6 @@
                             $("#NewAmount").text("费用合计: " + res.Data.NewAmount);
                             $("#MedicalInsuranceTotalCost").text("医保费用合计: " + res.Data.MedicalInsuranceTotalCost);
                         }
-                        
-
                         return {
                             "code": res.Code, //解析接口状态
                             "msg": res.Message, //解析提示文本
@@ -87,7 +85,25 @@
                 return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可
             }
             adjustmentTableQuery();
+            //门诊调差
+            function outpatientAdjustmentDifferenceValue(adjustmentParams) {
+          
 
+                $.ajax({
+                    type: 'POST',
+                    url: hostNew + '/OutpatientAdjustmentDifferenceValue',
+                    data: adjustmentParams,
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        if (data.Success === false) {
+                            var errData = data.Message;
+                            layer.alert(errData, { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
+                        } 
+                    }
+
+                });
+            }
             //头工具栏事件
             table.on('toolbar(AdjustmentDifferenceTable)', function (obj) {
 
@@ -106,10 +122,21 @@
                         }
                         if (dataValue.length > 1) {
                             layer.alert("调整费用只能单条调整!!!", { skin: 'layui-layer-molv', icon: 5, title: '错误提示' });
-                         
                             break;
                         } else {
+
+                            
+                            var adjustmentParams = {
+                                "TransKey": $("#transkey").val() /*医保交易码*/,
+                                "BusinessId": $("#bid").val() /*当前住院记录的业务ID*/,
+                                "UserId": $("#empid").val() /*授权操作人的ID*/,
+                                "DetailId": dataValue[0].DetailId,
+                                "OutpatientNo": dataValue[0].OutpatientNo,
+                                "Amount": dataValue[0].Amount,
+                                "Quantity": dataValue[0].Quantity
+                            }
                            
+                            outpatientAdjustmentDifferenceValue(adjustmentParams);
                             break;
                         }
                         

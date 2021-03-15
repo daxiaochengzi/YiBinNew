@@ -777,13 +777,19 @@ namespace BenDing.Repository.Providers.Web
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {
-                string strSql = null;
+                string querySql = null;
                 try
                 {
                     sqlConnection.Open();
-                    string querySql = $"select  * from [dbo].[OutpatientFee] where IsDelete=0 ";
+                     querySql = $"select  * from [dbo].[OutpatientFee] where IsDelete=0 ";
                     if (!string.IsNullOrWhiteSpace(param.PatientId))
+                    {
                         querySql += $" and PatientId='{param.PatientId}'";
+                    }
+                    else
+                    {
+                        querySql += " and PatientId=''";
+                    }           
                     if (!string.IsNullOrWhiteSpace(param.OutpatientNo))
                         querySql += $" and OutpatientNo='{param.OutpatientNo}'";
                     if (param.IsAdjustmentDifferenceValue==1)
@@ -795,7 +801,7 @@ namespace BenDing.Repository.Providers.Web
                 }
                 catch (Exception e)
                 {
-                    _log.Debug(strSql);
+                    _log.Debug(querySql);
                     throw new Exception(e.Message);
                 }
             }
@@ -1701,7 +1707,7 @@ namespace BenDing.Repository.Providers.Web
                              a.[MedicalTreatmentTotalCost],b.[ContactAddress],b.ReimbursementExpensesAmount,b.[CarryOver],b.ContactPhone  
                             from [dbo].[Outpatient] as a  JOIN (select * from [dbo].[MedicalInsurance] where  IsDelete=0 and 
 							  [InsuranceType]=342 and [MedicalInsuranceState]=6  
-							  and [PatientId] is not null and PatientId<>'') as b  on  a.Id=b.PatientId
+							  and [PatientId] is not null and PatientId<>'' and NotStatisticsMedicalExpenses<>1) as b  on  a.Id=b.PatientId
 							  where a.IsDelete=0 ";
             
                     if (!string.IsNullOrWhiteSpace(param.OrganizationCode))
@@ -1916,11 +1922,11 @@ namespace BenDing.Repository.Providers.Web
                              a.[MedicalTreatmentTotalCost],b.[ContactAddress],b.ReimbursementExpensesAmount,b.[CarryOver],b.ContactPhone  
                             from [dbo].[Outpatient] as a  JOIN (select * from [dbo].[MedicalInsurance] where  IsDelete=0 and 
 							  [InsuranceType]=342 and [MedicalInsuranceState]=6  
-							  and [PatientId] is not null and PatientId<>'') as b  on  a.Id=b.PatientId
+							  and [PatientId] is not null and PatientId<>'' and NotStatisticsMedicalExpenses<>1) as b  on  a.Id=b.PatientId
 							  where a.IsDelete=0";
                     string countSql = @"select COUNT(*) from [dbo].[Outpatient] as a  JOIN (select *from [dbo].[MedicalInsurance] where  IsDelete=0 and 
 							  [InsuranceType]=342 and [MedicalInsuranceState]=6  
-							  and [PatientId] is not null and PatientId<>'') as b  on  a.Id=b.PatientId
+							  and [PatientId] is not null and PatientId<>'' and NotStatisticsMedicalExpenses<>1) as b  on  a.Id=b.PatientId
 							  where a.IsDelete=0";
                     if (!string.IsNullOrWhiteSpace(param.OrganizationCode))
                         whereSql += $"  and a.OrganizationCode='{param.OrganizationCode}'";
@@ -2016,7 +2022,7 @@ namespace BenDing.Repository.Providers.Web
                              a.[VisitDate],b.CommunityName,b.SettlementUserName,b.[SettlementTime],b.[SelfPayFeeAmount],
                              a.[MedicalTreatmentTotalCost],b.[ContactAddress],b.ReimbursementExpensesAmount,b.[CarryOver],b.ContactPhone  from [dbo].[Outpatient] as a  JOIN (select *from [dbo].[MedicalInsurance] where  IsDelete=0 and 
 							  [InsuranceType]=342 and [MedicalInsuranceState]=6  
-							  and [PatientId] is not null and PatientId<>'') as b  on  a.Id=b.PatientId
+							  and [PatientId] is not null and PatientId<>'' and NotStatisticsMedicalExpenses<>1) as b  on  a.Id=b.PatientId
 							  where a.IsDelete=0
 ";
                    

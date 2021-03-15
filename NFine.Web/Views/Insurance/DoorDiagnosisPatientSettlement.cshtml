@@ -162,15 +162,15 @@
                 </div>
             </div>
             <div class="layui-form-item" id="queryDataDiv" style="text-align: center; margin-top: 20px;">
-                <button type="button" Id="queryData"   class="layui-btn layui-btn-radius">查询</button>
-                <button type="button" Id="AdjustmentDifference" class="layui-btn layui-btn-radius">调差</button>
-             
+                <button type="button" Id="queryData" class="layui-btn layui-btn-radius">查询</button>
+                
             </div>
             <div class="layui-form-item" id="DoorDiagnosisPreSettlementDiv" style="text-align: center; margin-top: 20px;">
-                <button type="button" Id="CatalogPairCode" class="layui-btn layui-btn-radius">项目对码</button>
-                @*<button type="button" Id="AdjustmentDifference" class="layui-btn layui-btn-radius">调差</button>*@
+                <button type="button" Id="CatalogPairCode" class="layui-btn layui-btn-radius">对码</button>
+                <button type="button" Id="AdjustmentDifference" class="layui-btn layui-btn-radius">调差</button>
                 <button type="button" Id="SettlementCard" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">职工刷卡结算</button>
                 <button type="button" Id="ResidentSettlementCard" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">居民结算</button>
+                <input type="checkbox" disabled="disabled" id="NotStatisticsMedicalExpenses" title="结算不登记一般诊疗费" value="1" name="NotStatisticsMedicalExpenses" lay-skin="primary">
                 <button type="button" Id="MedicalFeeRegistration" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">居民报账一般诊疗费登记</button>
                 <button type="button" Id="DoorDiagnosisPreSettlement" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">职工计划生育预结算</button>
                 <button type="button" Id="OutpatientNationEcTrans" disabled="disabled" class="layui-btn layui-btn-disabled layui-btn-radius">电子凭证结算</button>
@@ -211,6 +211,8 @@
         $("#DoorDiagnosisSettlementDiv").hide();
         $("#queryDataDiv").hide();
         $("#passwordDiv").hide();
+       // $("#NotStatisticsMedicalExpenses").removeAttr("disabled");
+        
         //门诊病人信息
        var outpatientData;
         //新的插件对象
@@ -239,10 +241,10 @@
         //新插件对象
         var activeXNew = document.getElementById("CSharpActiveX"); 
        // 插件检查
-        //var verification = DetectActiveX();
-        //if (verification === false) {
-        //    return false;
-        //}
+        var verification = DetectActiveX();
+        if (verification === false) {
+            return false;
+        }
         //是否使用加密键盘
         function isPassKey() {
             //var activeX = document.getElementById("CSharpActiveX");
@@ -328,6 +330,9 @@
             }
             if (settlementVal === "3" )//电子凭证结算
             {
+                if (baseInfoNew.Inpatient.InsuranceType === "342") {
+                    $("#NotStatisticsMedicalExpenses").removeAttr("disabled");
+                }
                 buttonStatus("OutpatientNationEcTrans", true);
             }
             //职工刷卡结算
@@ -340,6 +345,7 @@
             }
             //居民刷卡结算
             if (settlementVal === "4" && baseInfoNew.Inpatient.InsuranceType === "342") {
+                $("#NotStatisticsMedicalExpenses").removeAttr("disabled");
                 if (baseInfoNew.Inpatient.ResidentInsuranceBalance === 0) {
                     buttonStatus("ResidentSettlementCard", false);
                     buttonStatus("MedicalFeeRegistration", false);
@@ -624,7 +630,10 @@
                     baseInfoNew.Inpatient.PatientName,
                     baseInfoNew.Inpatient.IdCardNo);
                 if (auditData === false) return false;
-
+                var notStatisticsMedicalExpenses = $('input[name="NotStatisticsMedicalExpenses"]:checked').val();
+                if (notStatisticsMedicalExpenses === "1") {
+                    ecTransParam["NotStatisticsMedicalExpenses"] = "1";
+                }
                 ecTransParam["CommunityName"] = baseInfoNew.Inpatient.CommunityName;
                 ecTransParam["ContactPhone"] = $("#ContactPhone").val();
                 ecTransParam["ContactAddress"] = baseInfoNew.Inpatient.ContactAddress;
@@ -812,10 +821,15 @@
         //门诊居民结算
         function residentOutpatientPreSettlement(settlementJsonData) {
             var preParam = $.extend({}, params);
+            var notStatisticsMedicalExpenses = $('input[name="NotStatisticsMedicalExpenses"]:checked').val();
+            if (notStatisticsMedicalExpenses === "1") {
+                preParam["NotStatisticsMedicalExpenses"] = "1";
+            }
             preParam["InsuranceType"] = "342";
             preParam["SettlementJson"] = settlementJsonData;
             preParam["CommunityName"] = baseInfoNew.Inpatient.CommunityName;
             preParam["ContactPhone"] = $("#ContactPhone").val();
+           
             preParam["ContactAddress"] = baseInfoNew.Inpatient.ContactAddress;
             $.ajax({
                 type: 'post',
@@ -1000,7 +1014,7 @@
         });
         //查询
         $('#queryData').on('click', function () {
-           
+        
             var settlementVal = $('input[name="Settlement"]:checked').val();
             if (settlementVal === "4" || settlementVal === "5") {
                 if ($("#ContactPhone").val() === "") {

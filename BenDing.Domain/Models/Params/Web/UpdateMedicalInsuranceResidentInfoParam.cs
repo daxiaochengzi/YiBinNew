@@ -10,8 +10,8 @@ namespace BenDing.Domain.Models.Params.Web
 /// </summary>
    public class UpdateMedicalInsuranceResidentSettlementParam
     {/// <summary>
-    /// Id
-    /// </summary>
+     /// Id  NotStatisticsMedicalExpenses
+     /// </summary>
         public Guid Id { get; set; }
         /// <summary>
         /// 用户id
@@ -85,6 +85,11 @@ namespace BenDing.Domain.Models.Params.Web
         /// 病人id
         /// </summary>
         public  string PatientId { get; set; }
+
+        /// <summary>
+        /// 不统计一般诊疗费
+        /// </summary>
+        public int? NotStatisticsMedicalExpenses { get; set; } = null;
 
     }
 }

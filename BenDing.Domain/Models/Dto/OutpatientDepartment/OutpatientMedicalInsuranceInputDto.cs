@@ -9,11 +9,11 @@ namespace BenDing.Domain.Models.Dto.OutpatientDepartment
 {
    public class OutpatientMedicalInsuranceInputDto
     {/// <summary>
-    ///  旧的基层默认费用合计
-    /// </summary>
+     ///  基层保留四位小数
+     /// </summary>
         public decimal OldTotalCost { get; set; }
         /// <summary>
-        /// 新的费用合计
+        /// 基层费用合计
         /// </summary>
         public decimal NewTotalCost{ get; set; }
         /// <summary>

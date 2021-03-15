@@ -95,9 +95,11 @@
     <Compile Include="Models\Dto\OutpatientDepartment\MedicalExpenseYearExcelDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\MedicalExpenseYearReportDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\NationEcTransDto.cs" />
+    <Compile Include="Models\Dto\OutpatientDepartment\OutpatientDetailQueryDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\OutpatientMedicalInsuranceInputDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\OutpatientPairCodeQueryDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\QueryHospitalizationFeeNewDto.cs" />
+    <Compile Include="Models\Dto\OutpatientDepartment\QueryOutpatientDetailListDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\ReportParametersDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\ResidentOutpatientPreSettlementXmlDto.cs" />
     <Compile Include="Models\Dto\OutpatientDepartment\WorkerBirthSettlementDto.cs" />
@@ -213,6 +215,7 @@
     <Compile Include="Models\Params\OutpatientDepartment\OutpatientPlanBirthSettlementParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\OutpatientPlanBirthSettlementQueryParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\QueryOutpatientDepartmentCostParam.cs" />
+    <Compile Include="Models\Params\OutpatientDepartment\QueryOutpatientDetailListParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\ResidentOutpatientSettlementCardParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\SaveOutpatientDetailParam.cs" />
     <Compile Include="Models\Params\OutpatientDepartment\UpdateMedicalInsuranceCardSettlementParam.cs" />
@@ -311,6 +314,7 @@
     <Compile Include="Models\Params\UI\MedicalInsuranceXmlUiParam.cs" />
     <Compile Include="Models\Params\UI\ModifyWorkerHospitalizationUiParam.cs" />
     <Compile Include="Models\Params\UI\MonthlyHospitalizationUiParam.cs" />
+    <Compile Include="Models\Params\UI\OutpatientDetailQueryUiParam.cs" />
     <Compile Include="Models\Params\UI\OutpatientExclusionUiParam.cs" />
     <Compile Include="Models\Params\UI\OutpatientNationEcTransUiParam.cs" />
     <Compile Include="Models\Params\UI\OutpatientPairCodeUiParam.cs" />

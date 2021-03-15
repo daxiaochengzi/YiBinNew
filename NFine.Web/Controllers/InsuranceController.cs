@@ -146,6 +146,18 @@ namespace NFine.Web.Controllers
             ViewBag.transkey = param.TransKey;
             return View();
         }
+        /// <summary>
+        /// 门诊调差
+        /// </summary>
+        /// <returns></returns>
+
+        public ActionResult OutpatientAdjustmentDifference(GetHisBaseParam param)
+        {
+            ViewBag.empid = param.EmpId;
+            ViewBag.bid = param.BId;
+            ViewBag.transkey = param.TransKey;
+            return View();
+        }
 
         /// <summary>
         /// 住院清单上传,2.2.4.	处方项目传输

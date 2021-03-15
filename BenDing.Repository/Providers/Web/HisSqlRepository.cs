@@ -768,7 +768,38 @@ namespace BenDing.Repository.Providers.Web
 
             }
         }
-
+        /// <summary>
+        /// 查询门诊List
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public List<BaseOutpatientDetailDto> QueryOutpatientDetailList(QueryOutpatientDetailListParam param)
+        {
+            using (var sqlConnection = new SqlConnection(_connectionString))
+            {
+                string strSql = null;
+                try
+                {
+                    sqlConnection.Open();
+                    string querySql = $"select  * from [dbo].[OutpatientFee] where IsDelete=0 ";
+                    if (!string.IsNullOrWhiteSpace(param.PatientId))
+                        querySql += $" and PatientId='{param.PatientId}'";
+                    if (!string.IsNullOrWhiteSpace(param.OutpatientNo))
+                        querySql += $" and OutpatientNo='{param.OutpatientNo}'";
+                    if (param.IsAdjustmentDifferenceValue==1)
+                        querySql += " and IsAdjustmentDifference=1";
+                    
+                    var data = sqlConnection.Query<BaseOutpatientDetailDto>(querySql);
+                    sqlConnection.Close();
+                    return data.ToList();
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(strSql);
+                    throw new Exception(e.Message);
+                }
+            }
+        }
         /// <summary>
         /// 更新门诊病人
         /// </summary>
@@ -1341,7 +1372,7 @@ namespace BenDing.Repository.Providers.Web
                 /// </summary>
                 /// <param name="param"></param>
                 /// <returns></returns>
-                public QueryInpatientInfoDto QueryInpatientInfo(QueryInpatientInfoParam param)
+      public QueryInpatientInfoDto QueryInpatientInfo(QueryInpatientInfoParam param)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {

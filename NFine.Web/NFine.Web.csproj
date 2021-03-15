@@ -836,6 +836,7 @@
     <Content Include="Views\Shared\_CSharpActiveX.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Views\Insurance\OutpatientDirectoryCode.cshtml" />
+    <Content Include="Views\Insurance\OutpatientAdjustmentDifference.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

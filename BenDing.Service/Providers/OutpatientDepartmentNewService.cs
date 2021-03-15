@@ -8,6 +8,7 @@ using BenDing.Domain.Models.Dto.OutpatientDepartment;
 using BenDing.Domain.Models.Dto.Web;
 using BenDing.Domain.Models.Enums;
 using BenDing.Domain.Models.HisXml;
+using BenDing.Domain.Models.Params.Base;
 using BenDing.Domain.Models.Params.OutpatientDepartment;
 using BenDing.Domain.Models.Params.SystemManage;
 using BenDing.Domain.Models.Params.UI;
@@ -846,6 +847,63 @@ namespace BenDing.Service.Providers
             _medicalInsuranceSqlRepository.UpdateMedicalInsuranceResidentSettlement(updateParamData);
             return iniData;
         }
+        /// <summary>
+        /// 门诊明细查询
+        /// </summary>
+        public OutpatientDetailQueryDto OutpatientDetailQuery(OutpatientDetailQueryUiParam param)
+        {
+            var resultData = new OutpatientDetailQueryDto();
+            var resultDataPage = new List<BaseOutpatientDetailDto>();
+            var userBase = _serviceBasicService.GetUserBaseInfo(param.UserId);
+            userBase.TransKey = param.TransKey;
+            var outpatientDetail = _serviceBasicService.OutpatientMedicalInsuranceInput(new OutpatientDetailParam()
+            {
+                User = userBase,
+                BusinessId = param.BusinessId,
+              
+                //IsSave = true
+            });
+
+            var detailData = outpatientDetail.DetailList;
+            var adjustmentDifferenceValue=_hisSqlRepository.QueryOutpatientDetailList(new QueryOutpatientDetailListParam()
+            {
+                IsAdjustmentDifferenceValue =1,
+                OutpatientNo = outpatientDetail.BaseOutpatient.OutpatientNumber
+            });
+            foreach (var item in detailData)
+            {
+                var itemData = item;
+                if (adjustmentDifferenceValue != null && adjustmentDifferenceValue.Any())
+                {
+                    var adjustmentDifferenceData = adjustmentDifferenceValue
+                        .FirstOrDefault(c => c.DetailId == item.DetailId);
+                    if (adjustmentDifferenceData != null)
+                    {
+                        resultDataPage.Add(adjustmentDifferenceData);
+                    }
+                    else
+                    {
+                        itemData.Amount = item.UnitPrice * item.Quantity;
+                        resultDataPage.Add(itemData);
+                    }
+                }
+                else
+                {
+                    
+                    itemData.Amount = item.UnitPrice * item.Quantity;
+                    resultDataPage.Add(itemData);
+                }
+
+              
+            }
+
+            resultData.PageData = resultDataPage;
+            resultData.OutpatientNumber = outpatientDetail.BaseOutpatient.OutpatientNumber;
+            resultData.NewTotalCost = outpatientDetail.NewTotalCost;
+            resultData.MedicalInsuranceTotalCost = resultDataPage.Sum(c => c.Amount);
+            return resultData;
+        }
+
         /// <summary>
         /// 居民电子凭证支付参数
         /// </summary>

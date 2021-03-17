@@ -1139,8 +1139,6 @@ namespace BenDing.Repository.Providers.Web
                 }
             }
         }
-      
-
         /// <summary>
         /// 批量审核数据
         /// </summary>
@@ -1378,7 +1376,7 @@ namespace BenDing.Repository.Providers.Web
                 /// </summary>
                 /// <param name="param"></param>
                 /// <returns></returns>
-      public QueryInpatientInfoDto QueryInpatientInfo(QueryInpatientInfoParam param)
+        public QueryInpatientInfoDto QueryInpatientInfo(QueryInpatientInfoParam param)
         {
             using (var sqlConnection = new SqlConnection(_connectionString))
             {

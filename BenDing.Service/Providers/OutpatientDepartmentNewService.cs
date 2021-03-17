@@ -1824,15 +1824,13 @@ namespace BenDing.Service.Providers
 
                     foreach (var item in dataList)
                     {
-
-                        if (item.DirectoryCode == quantityOne.DirectoryCode)
+                        var itemNew = item;
+                        if (item.DirectoryCode == quantityOne.DirectoryCode && item.Quantity==1)
                         {
-                            var itemNew = item;//大于加小于减
                             itemNew.UnitPrice = item.UnitPrice + unitPrice;
                             itemNew.TotalAmount = itemNew.UnitPrice * item.Quantity;
-                            resultData.Add(itemNew);
                         }
-                        resultData.Add(item);
+                        resultData.Add(itemNew);
                     }
                 }
                 else

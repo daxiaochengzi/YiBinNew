@@ -74,7 +74,7 @@ namespace BenDing.Domain.Models.Dto.Web
         /// <summary>
         /// 数量
         /// </summary>
-        public int Quantity { get; set; }
+        public decimal Quantity { get; set; }
         /// <summary>
         /// 单价
         /// </summary>
